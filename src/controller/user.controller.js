@@ -117,6 +117,26 @@ async function signIn(req, res) {
     }
 }
 
+async function authenticate(req, res) {
+    try {
+        const response = await UserService.authenticate({
+            token: req.body.token,
+        });
+        Logger.info(Strings.CRATED);
+
+        SuccessResponse.message = "successfully signed the airplane";
+        SuccessResponse.data = response;
+
+        return res.json(SuccessResponse);
+    } catch (error) {
+        Logger.error(`${Strings.FAILED_CREATE} : ${error.message}`);
+
+        ErrorResponse.error = error;
+
+        return res.status(error.statusCode).json(ErrorResponse);
+    }
+}
+
 module.exports = {
     createUser,
     getUser,
@@ -124,4 +144,5 @@ module.exports = {
     deleteUser,
     updateUser,
     signIn,
+    authenticate,
 };

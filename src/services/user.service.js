@@ -75,15 +75,44 @@ async function signIn(data) {
             throw new AppError("Invalid password", StatusCodes.BAD_REQUEST);
         }
 
-        console.log(userDetail);
+        const jwt = Auth.createJWT({
+            id: userDetail.id,
+            email: userDetail.email,
+        });
 
-        return userDetail;
+        return jwt;
     } catch (error) {
         console.log(error);
         throw new AppError(
             "Invalid email or password",
             StatusCodes.UNAUTHORIZED
         );
+    }
+}
+
+async function authenticate(token) {
+    try {
+        if (!token) {
+            throw new AppError(
+                "token not found in upcomming request",
+                StatusCodes.BAD_REQUEST
+            );
+        }
+
+        const response = Auth.verifyJWT(token);
+
+        const user = await userRepository.get(response.id);
+
+        if (!user) {
+            throw new AppError(
+                "user not found with jwt token",
+                StatusCodes.BAD_REQUEST
+            );
+        }
+
+        return response;
+    } catch (error) {
+        throw error;
     }
 }
 
@@ -94,4 +123,5 @@ module.exports = {
     updateUser,
     deleteUser,
     signIn,
+    authenticate,
 };
