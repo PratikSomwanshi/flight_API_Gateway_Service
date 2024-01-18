@@ -1,11 +1,14 @@
 const { Logger } = require("../config");
-const { AirplaneService } = require("../services");
+const { UserService } = require("../services");
 const { ErrorResponse, SuccessResponse } = require("../utils/common");
 const Strings = require("../utils/strings/airplane.string");
 
-async function createAirplane(req, res) {
+async function createUser(req, res) {
     try {
-        const response = await AirplaneService.createAirplane(req.body);
+        const response = await UserService.createUser({
+            email: req.body.email,
+            password: req.body.password,
+        });
         Logger.info(Strings.CRATED);
 
         SuccessResponse.message = Strings.CRATED;
@@ -21,9 +24,9 @@ async function createAirplane(req, res) {
     }
 }
 
-async function getAirplane(req, res) {
+async function getUser(req, res) {
     try {
-        const response = await AirplaneService.getAirplane(req.params.id);
+        const response = await UserService.getUser(req.params.id);
         Logger.info(Strings.CRATED);
 
         SuccessResponse.message = Strings.CRATED;
@@ -39,9 +42,9 @@ async function getAirplane(req, res) {
     }
 }
 
-async function getAllAirplane(req, res) {
+async function getAllUser(req, res) {
     try {
-        const response = await AirplaneService.getAllAirplane(req.body.id);
+        const response = await UserService.getAllUser(req.body.id);
         Logger.info(Strings.CRATED);
 
         SuccessResponse.message = Strings.CRATED;
@@ -57,12 +60,9 @@ async function getAllAirplane(req, res) {
     }
 }
 
-async function updateAirplane(req, res) {
+async function updateUser(req, res) {
     try {
-        const response = await AirplaneService.updateAirplane(
-            req.body,
-            req.params.id
-        );
+        const response = await UserService.updateUser(req.body, req.params.id);
         Logger.info(Strings.CRATED);
 
         SuccessResponse.message = "successfully updated the airplane";
@@ -78,9 +78,9 @@ async function updateAirplane(req, res) {
     }
 }
 
-async function deleteAirplane(req, res) {
+async function deleteUser(req, res) {
     try {
-        const response = await AirplaneService.deleteAirplane(req.params.id);
+        const response = await UserService.deleteUser(req.params.id);
         Logger.info(Strings.CRATED);
 
         SuccessResponse.message = "successfully deleted the airplane";
@@ -96,10 +96,32 @@ async function deleteAirplane(req, res) {
     }
 }
 
+async function signIn(req, res) {
+    try {
+        const response = await UserService.signIn({
+            email: req.body.email,
+            password: req.body.password,
+        });
+        Logger.info(Strings.CRATED);
+
+        SuccessResponse.message = "successfully signed the airplane";
+        SuccessResponse.data = response;
+
+        return res.json(SuccessResponse);
+    } catch (error) {
+        Logger.error(`${Strings.FAILED_CREATE} : ${error.message}`);
+
+        ErrorResponse.error = error;
+
+        return res.status(error.statusCode).json(ErrorResponse);
+    }
+}
+
 module.exports = {
-    createAirplane,
-    getAirplane,
-    getAllAirplane,
-    deleteAirplane,
-    updateAirplane,
+    createUser,
+    getUser,
+    getAllUser,
+    deleteUser,
+    updateUser,
+    signIn,
 };

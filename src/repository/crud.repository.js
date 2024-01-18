@@ -19,22 +19,19 @@ class CrudRepository {
     }
 
     async update(data, id) {
-        const airplane = await this.model.findByPk(id);
+        const resource = await this.model.findByPk(id);
 
-        airplane.set({
-            capacity: data.capacity,
-            modelNumber: data.modelNumber,
-        });
+        resource.set({ ...data });
 
-        await airplane.save();
+        await resource.save();
 
-        return airplane;
+        return resource;
     }
 
     async delete(id) {
-        const airplane = await this.model.findByPk(id);
-        await airplane.destroy();
-        return airplane;
+        const resource = await this.model.findByPk(id);
+        await resource.destroy();
+        return resource;
     }
 }
 
